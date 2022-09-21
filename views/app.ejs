@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Caesar cipher</title>
+</head>
+
+<body>
+	<div style="margin: auto; width: 200px;" ;>
+		<div style="display: flex; flex-direction: column">
+			<label for="alphabet">Enter Alphabet</label>
+			<input type="text" name="alphabet" id="alphabet" onkeydown="return /[A-Z]/i.test(event.key)">
+		</div>
+		<div style="display: flex; flex-direction: column;margin-top: 5px ">
+			<label for="key">Enter key</label>
+			<input type="number" name="key" id="key" onkeypress="return isNumber(event)">
+		</div>
+		<div style="margin-top: 5px">
+			<button id="encode">Encode Data</button>
+		</div>
+	</div>
+	<div style="margin-top: 15px; color:blue; text-align: center;" id="encoded-string"></div>
+
+</body>
+
+<script>
+	const letters = document.getElementById("alphabet")
+	const key = document.getElementById("key")
+
+	letters.addEventListener("input", function (e) {
+		e.target.value = e.target.value.toUpperCase();
+	})
+
+	function isNumber(evt) {
+		evt = (evt) ? evt : window.event;
+		var charCode = (evt.which) ? evt.which : evt.keyCode;
+		if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+			return false;
+		}
+		return true;
+	}
+
+	document.getElementById("encode").addEventListener("click", function async() {
+		fetch(`http://localhost:3500/api/encode/?${new URLSearchParams({ letters: letters.value, key: key.value })}`)
+			.then((response) => response.json())
+			.then((data) => {
+				console.log(data);
+				document.getElementById("encoded-string").innerText = `Encoded Data - ${data.value}`
+			})
+			.catch((error) => {
+				console.log(error)
+				document.getElementById("encoded-string").innerText = `${error}`
+			});
+	})
+
+</script>
+
+</html>
